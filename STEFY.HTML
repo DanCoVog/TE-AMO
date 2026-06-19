@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El 22 que nos une — Para ti</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --negro: #08090b;
+            --negro-2: #0f1114;
+            --negro-3: #161a1f;
+            --dorado: #c9a34a;
+            --dorado-lt: #e8c87a;
+            --dorado-dm: rgba(201, 163, 74, 0.18);
+            --azul: #4a7fa5;
+            --azul-lt: #7eb3d4;
+            --azul-ps: rgba(74, 127, 165, 0.15);
+            --verde: #4a8c6a;
+            --verde-lt: #7ec4a0;
+            --verde-ps: rgba(74, 140, 106, 0.15);
+            --crema: #f0e8d8;
+            --crema-dm: #c8bfad;
+            --muted: #6b6458;
+            --border: rgba(201, 163, 74, 0.13);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--negro);
+            color: var(--crema);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ── CANVAS DE ESTRELLAS ── */
+        #canvas-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ── LAYOUT ── */
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 1.5rem 6rem;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .hero-22 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(9rem, 28vw, 18rem);
+            font-weight: 300;
+            line-height: 0.85;
+            background: linear-gradient(160deg, var(--dorado-lt) 0%, var(--dorado) 40%, var(--azul-lt) 75%, var(--verde-lt) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.04em;
+            opacity: 0;
+            animation: riseUp 1.4s cubic-bezier(.16, 1, .3, 1) 0.2s forwards;
+            user-select: none;
+        }
+
+        @keyframes riseUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .hero-fechas {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0 2.5rem;
+            opacity: 0;
+            animation: fadeSlide 1s ease 1s forwards;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fecha-pill {
+            padding: 0.45rem 1.1rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .pill-ella {
+            background: var(--azul-ps);
+            border: 1px solid rgba(74, 127, 165, 0.35);
+            color: var(--azul-lt);
+        }
+
+        .pill-yo {
+            background: var(--verde-ps);
+            border: 1px solid rgba(74, 140, 106, 0.35);
+            color: var(--verde-lt);
+        }
+
+        .fechas-sep {
+            color: var(--dorado);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            opacity: 0.6;
+        }
+
+        .hero-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--crema-dm);
+            max-width: 520px;
+            line-height: 1.7;
+            opacity: 0;
+            animation: fadeSlide 1s ease 1.3s forwards;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            opacity: 0;
+            animation: fadeSlide 1s ease 2s forwards;
+        }
+
+        .scroll-hint span {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 36px;
+            background: linear-gradient(180deg, var(--dorado), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scaleY(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scaleY(1.15);
+            }
+        }
+
+        /* ── DIVISORES ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 3.5rem 0 2.5rem;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+        }
+
+        .divider-line.gold {
+            background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+        }
+
+        .divider-line.blue {
+            background: linear-gradient(90deg, transparent, var(--azul), transparent);
+        }
+
+        .divider-line.green {
+            background: linear-gradient(90deg, transparent, var(--verde), transparent);
+        }
+
+        .divider-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .divider-label.gold {
+            color: var(--dorado);
+        }
+
+        .divider-label.blue {
+            color: var(--azul-lt);
+        }
+
+        .divider-label.green {
+            color: var(--verde-lt);
+        }
+
+        /* ── SECCIONES REVEAL ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.85s cubic-bezier(.25, .46, .45, .94),
+                transform 0.85s cubic-bezier(.25, .46, .45, .94);
+        }
+
+        .reveal.on {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── CARTA ── */
+        .carta {
+            background: var(--negro-2);
+            border: 1px solid var(--border);
+            border-left: 2px solid var(--dorado);
+            border-radius: 14px;
+            padding: 2.5rem 2.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carta::before {
+            content: '"';
+            position: absolute;
+            top: -0.5rem;
+            left: 1.5rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 8rem;
+            line-height: 1;
+            color: var(--dorado);
+            opacity: 0.07;
+            pointer-events: none;
+        }
+
+        .carta p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.18rem;
+            line-height: 2;
+            color: var(--crema-dm);
+            margin-bottom: 1.4rem;
+        }
+
+        .carta p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .carta .firma {
+            display: block;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.35rem;
+            color: var(--dorado-lt);
+            text-align: right;
+        }
+
+        /* ── NÚMERO 22 FLOTANTE ── */
+        .big-22-section {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .big-22-section p {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--muted);
+            max-width: 420px;
+            margin: 0 auto;
+            line-height: 1.9;
+        }
+
+        .big-22-inline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            font-weight: 300;
+            line-height: 1;
+            display: block;
+            margin: 0.5rem 0 1rem;
+            background: linear-gradient(135deg, var(--dorado-lt), var(--azul-lt), var(--verde-lt));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── GRID DE RECUERDOS ── */
+        .mem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .mem-card {
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mem-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .mem-card.gold-card {
+            background: linear-gradient(135deg, rgba(201, 163, 74, 0.09), rgba(201, 163, 74, 0.03));
+            border-color: rgba(201, 163, 74, 0.22);
+        }
+
+        .mem-card.blue-card {
+            background: linear-gradient(135deg, rgba(74, 127, 165, 0.1), rgba(74, 127, 165, 0.03));
+            border-color: rgba(74, 127, 165, 0.22);
+        }
+
+        .mem-card.green-card {
+            background: linear-gradient(135deg, rgba(74, 140, 106, 0.1), rgba(74, 140, 106, 0.03));
+            border-color: rgba(74, 140, 106, 0.22);
+        }
+
+        .mem-card.wide {
+            grid-column: 1 / -1;
+        }
+
+        .mem-icon {
+            font-size: 1.6rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .mem-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .mem-card.gold-card .mem-title {
+            color: var(--dorado-lt);
+        }
+
+        .mem-card.blue-card .mem-title {
+            color: var(--azul-lt);
+        }
+
+        .mem-card.green-card .mem-title {
+            color: var(--verde-lt);
+        }
+
+        .mem-text {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* ── CALENDARIO 22 ── */
+        .cal-22 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .cal-card {
+            border-radius: 14px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cal-card::before {
+            content: '22';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 9rem;
+            font-weight: 300;
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .cal-card.ella {
+            background: linear-gradient(135deg, rgba(74, 127, 165, 0.12), rgba(74, 127, 165, 0.04));
+            border-color: rgba(74, 127, 165, 0.28);
+        }
+
+        .cal-card.yo {
+            background: linear-gradient(135deg, rgba(74, 140, 106, 0.12), rgba(74, 140, 106, 0.04));
+            border-color: rgba(74, 140, 106, 0.28);
+        }
+
+        .cal-quien {
+            font-size: 0.65rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 0.6rem;
+        }
+
+        .cal-card.ella .cal-quien {
+            color: var(--azul-lt);
+        }
+
+        .cal-card.yo .cal-quien {
+            color: var(--verde-lt);
+        }
+
+        .cal-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4.5rem;
+            font-weight: 300;
+            line-height: 1;
+            display: block;
+        }
+
+        .cal-card.ella .cal-num {
+            color: var(--azul-lt);
+        }
+
+        .cal-card.yo .cal-num {
+            color: var(--verde-lt);
+        }
+
+        .cal-fecha {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 0.4rem;
+            display: block;
+        }
+
+        .cal-conector {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--muted);
+            padding: 0.75rem 0;
+        }
+
+        .cal-conector strong {
+            color: var(--dorado-lt);
+            font-style: normal;
+        }
+
+        /* ── PROMESAS ── */
+        .promesas {
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .promesa {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.1rem 1.4rem;
+            background: var(--negro-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.92rem;
+            color: var(--crema-dm);
+            line-height: 1.6;
+            transition: border-color 0.25s ease;
+        }
+
+        .promesa:hover {
+            border-color: rgba(201, 163, 74, 0.3);
+        }
+
+        .promesa-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            text-align: center;
+            padding: 3rem 2.5rem;
+            background: var(--negro-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '22';
+            position: absolute;
+            bottom: -2rem;
+            right: -1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 14rem;
+            font-weight: 300;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--dorado), var(--azul), var(--verde));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.06;
+            pointer-events: none;
+        }
+
+        .cta-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--crema);
+            margin-bottom: 0.65rem;
+        }
+
+        .cta-sub {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-btns {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            border-radius: 7px;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--dorado-lt), var(--dorado));
+            color: var(--negro);
+            box-shadow: 0 8px 28px rgba(201, 163, 74, 0.3);
+        }
+
+        .btn-gold:hover {
+            box-shadow: 0 14px 38px rgba(201, 163, 74, 0.45);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(201, 163, 74, 0.3);
+            color: var(--dorado-lt);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--dorado);
+            background: rgba(201, 163, 74, 0.06);
+        }
+
+        /* ── BOTONES SÍ / NO ── */
+        .btn-si {
+            background: linear-gradient(135deg, var(--dorado-lt), var(--dorado));
+            color: var(--negro);
+            box-shadow: 0 8px 28px rgba(201, 163, 74, 0.35);
+            font-size: 1.05rem;
+            padding: 1rem 3.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-si:hover {
+            box-shadow: 0 14px 38px rgba(201, 163, 74, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .btn-no {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--muted);
+            font-size: 1.05rem;
+            padding: 1rem 3.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Jost', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            transition: font-size 0.25s ease, opacity 0.25s ease, transform 0.15s ease;
+            position: absolute;
+            white-space: nowrap;
+        }
+
+        /* ── RESPUESTA SÍ ── */
+        #respuesta-si {
+            animation: respFadeIn 1s cubic-bezier(.16, 1, .3, 1) forwards;
+        }
+
+        @keyframes respFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .resp-emoji {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.75rem;
+            animation: dragonFloat 3s ease-in-out infinite;
+        }
+
+        .resp-titulo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.3rem;
+            font-style: italic;
+            color: var(--dorado-lt);
+            margin-bottom: 0.75rem;
+        }
+
+        .resp-texto {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            line-height: 2.1;
+            color: var(--crema-dm);
+            margin-bottom: 2rem;
+        }
+
+        .resp-texto strong {
+            color: var(--dorado-lt);
+        }
+
+        .resp-texto em {
+            color: var(--azul-lt);
+        }
+
+        .resp-detalles {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .resp-item {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            background: linear-gradient(135deg, rgba(201, 163, 74, 0.08), rgba(74, 127, 165, 0.07));
+            border: 1px solid rgba(201, 163, 74, 0.22);
+            border-radius: 12px;
+            padding: 1.1rem 1.5rem;
+            min-width: 200px;
+        }
+
+        .resp-icon {
+            font-size: 1.8rem;
+        }
+
+        .resp-item>div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            text-align: left;
+        }
+
+        .resp-item strong {
+            color: var(--crema);
+            font-size: 0.95rem;
+        }
+
+        .resp-item span {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .heart {
+            display: inline-block;
+            animation: heartbeat 1.4s ease-in-out infinite;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(105vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        #btns-zone {
+            position: relative;
+            min-height: 120px;
+            margin-top: 1.5rem;
+            overflow: visible;
+        }
+
+        #btns-pair {
+            position: relative;
+            width: 100%;
+            min-height: 120px;
+        }
+
+        #btn-si {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-180px, -50%);
+        }
+
+        #btn-no {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(20px, -50%);
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            14% {
+                transform: scale(1.3);
+            }
+
+            28% {
+                transform: scale(1);
+            }
+
+            42% {
+                transform: scale(1.2);
+            }
+
+            56% {
+                transform: scale(1);
+            }
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            text-align: center;
+            padding: 3rem 0 0;
+            border-top: 1px solid rgba(201, 163, 74, 0.08);
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--muted);
+        }
+
+        .footer .footer-22 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-style: normal;
+            background: linear-gradient(90deg, var(--dorado), var(--azul-lt), var(--verde-lt));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        /* ── RESPONSIVE ── */
+        /* ── POEMA ── */
+        .poema-wrap {
+            position: relative;
+        }
+
+        .poema-deco {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .poema-dragon {
+            font-size: 2.8rem;
+            display: inline-block;
+            animation: dragonFloat 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 18px rgba(201, 163, 74, 0.4));
+        }
+
+        @keyframes dragonFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-3deg);
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(3deg);
+            }
+        }
+
+        .poema-note {
+            position: absolute;
+            top: 0.5rem;
+            right: 30%;
+            font-size: 1.4rem;
+            color: var(--azul-lt);
+            opacity: 0.5;
+            animation: noteFloat 3s ease-in-out infinite 1s;
+        }
+
+        @keyframes noteFloat {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: translateY(-8px);
+            }
+        }
+
+        .poema-card {
+            background: var(--negro-2);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 2.5rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poema-card::before {
+            content: '🤍';
+            position: absolute;
+            bottom: -1rem;
+            right: -1rem;
+            font-size: 9rem;
+            opacity: 0.03;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+
+        .poema-titulo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.7rem;
+            font-weight: 400;
+            color: var(--dorado-lt);
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.02em;
+        }
+
+        .poema-sub {
+            font-size: 0.78rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .poema-body {
+            display: grid;
+            gap: 0;
+        }
+
+        .estrofa {
+            padding: 1.25rem 0;
+        }
+
+        .estrofa p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.12rem;
+            line-height: 2.1;
+            color: var(--crema-dm);
+            font-weight: 300;
+        }
+
+        .estrofa p em {
+            color: var(--azul-lt);
+            font-style: italic;
+        }
+
+        .highlight-estrofa {
+            background: linear-gradient(135deg, rgba(74, 127, 165, 0.07), rgba(74, 140, 106, 0.05));
+            border-left: 2px solid var(--azul);
+            border-radius: 0 8px 8px 0;
+            padding-left: 1.25rem;
+            margin-left: -1.25rem;
+        }
+
+        .estrofa-final p {
+            color: var(--crema);
+            font-weight: 400;
+        }
+
+        .num-22 {
+            color: var(--dorado-lt);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        .poema-sep {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.2rem 0;
+        }
+
+        .ps-linea {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201, 163, 74, 0.2), transparent);
+        }
+
+        .ps-icon {
+            color: var(--dorado);
+            font-size: 0.65rem;
+            opacity: 0.5;
+        }
+
+        .poema-firma {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .poema-firma span {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+
+        .poema-firma-22 {
+            font-style: normal !important;
+            color: var(--dorado) !important;
+            letter-spacing: 0.15em;
+            font-size: 0.8rem !important;
+            font-family: 'Jost', sans-serif !important;
+            text-transform: uppercase;
+        }
+
+        /* ── BOTELLA ── */
+        .botella-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+            margin-top: 3rem;
+            padding: 2rem;
+        }
+
+        .botella {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            animation: bottleWobble 5s ease-in-out infinite;
+            filter: drop-shadow(0 8px 24px rgba(74, 127, 165, 0.3));
+        }
+
+        @keyframes bottleWobble {
+
+            0%,
+            100% {
+                transform: rotate(-2deg) translateY(0);
+            }
+
+            25% {
+                transform: rotate(1deg) translateY(-5px);
+            }
+
+            75% {
+                transform: rotate(-1deg) translateY(3px);
+            }
+        }
+
+        .botella-tapa {
+            width: 28px;
+            height: 18px;
+            background: linear-gradient(180deg, #4a7fa5, #2d5f80);
+            border-radius: 6px 6px 3px 3px;
+            border: 1px solid rgba(74, 127, 165, 0.5);
+        }
+
+        .botella-cuerpo {
+            width: 72px;
+            height: 180px;
+            background: linear-gradient(160deg,
+                    rgba(74, 127, 165, 0.25) 0%,
+                    rgba(74, 127, 165, 0.1) 40%,
+                    rgba(74, 140, 106, 0.15) 100%);
+            border: 1px solid rgba(74, 127, 165, 0.35);
+            border-top: none;
+            border-radius: 6px 6px 16px 16px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .botella-agua {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 55%;
+            background: linear-gradient(180deg,
+                    rgba(74, 127, 165, 0.3),
+                    rgba(74, 140, 106, 0.4));
+            border-radius: 0 0 14px 14px;
+            animation: waterMove 3s ease-in-out infinite;
+        }
+
+        .botella-agua::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -10%;
+            width: 120%;
+            height: 14px;
+            background: rgba(127, 190, 220, 0.3);
+            border-radius: 50%;
+            animation: waveAnim 2s ease-in-out infinite;
+        }
+
+        @keyframes waterMove {
+
+            0%,
+            100% {
+                height: 52%;
+            }
+
+            50% {
+                height: 58%;
+            }
+        }
+
+        @keyframes waveAnim {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(8px);
+            }
+        }
+
+        .botella-texto {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.85rem;
+            color: rgba(200, 230, 240, 0.8);
+            line-height: 1.5;
+        }
+
+        .botella-texto small {
+            font-size: 0.65rem;
+            display: block;
+            color: rgba(126, 179, 212, 0.7);
+            letter-spacing: 0.05em;
+        }
+
+        .botella-label {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: var(--muted);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 560px) {
+            .mem-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cal-22 {
+                grid-template-columns: 1fr;
+            }
+
+            .cal-card.yo {
+                order: 1;
+            }
+
+            .cal-conector {
+                order: 2;
+            }
+
+            .carta {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .cta-section {
+                padding: 2rem 1.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ESTRELLAS ANIMADAS -->
+    <canvas id="canvas-bg"></canvas>
+
+    <div class="wrap">
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-22">22</div>
+            <div class="hero-fechas">
+                <span class="fecha-pill pill-ella">09 / 22 — Ella</span>
+                <span class="fechas-sep">·</span>
+                <span class="fecha-pill pill-yo">06 / 22 — Yo</span>
+            </div>
+            <p class="hero-sub">El universo nos dio el mismo número en meses distintos. Como si desde siempre supiéramos
+                que estábamos hechos para encontrarnos.</p>
+            <div class="scroll-hint">
+                <span>Continúa</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- CARTA -->
+        <div class="divider reveal">
+            <div class="divider-line gold"></div>
+            <span class="divider-label gold">Mi corazón</span>
+            <div class="divider-line gold"></div>
+        </div>
+
+        <div class="carta reveal">
+            <p>Sé que las cosas entre nosotros no terminaron bien. Y sé que una parte de eso fue mi culpa. He pensado
+                mucho en lo que dijimos, en lo que callamos, y en todo lo que dejamos sin resolver.</p>
+            <p>Extraño tu risa. Extraño cómo me hacías sentir cuando estábamos juntos. Extraño la versión de mí mismo
+                que aparecía cuando estaba contigo.</p>
+            <p>No te escribo esto para presionarte ni para hacerte sentir mal. Te escribo porque eres importante para
+                mí, porque lo que vivimos fue real, y porque creo que merecemos al menos la oportunidad de hablar.</p>
+            <p>Y ese <strong style="color:var(--dorado-lt)">22</strong> que compartimos — el tuyo en septiembre, el mío
+                en junio — siempre lo sentí como una señal de que no fue casualidad. Que había algo entre nosotros
+                escrito antes de que nos conociéramos.</p>
+            <span class="firma">Con todo lo que soy — Tuyo siempre ♡</span>
+        </div>
+
+        <!-- NUESTRO 22 -->
+        <div class="divider reveal">
+            <div class="divider-line blue"></div>
+            <span class="divider-label blue">Nuestro número</span>
+            <div class="divider-line blue"></div>
+        </div>
+
+        <div class="cal-22 reveal">
+            <div class="cal-card ella">
+                <div class="cal-quien">Ella nació</div>
+                <span class="cal-num">22</span>
+                <span class="cal-fecha">Septiembre · 09/22</span>
+            </div>
+            <div class="cal-card yo">
+                <div class="cal-quien">Yo nací</div>
+                <span class="cal-num">22</span>
+                <span class="cal-fecha">Junio · 06/22</span>
+            </div>
+            <div class="cal-conector">
+                Los dos nacimos un <strong>22</strong>. Eso no es coincidencia. Eso es destino.
+            </div>
+        </div>
+
+        <!-- POR QUÉ TE EXTRAÑO -->
+        <div class="divider reveal">
+            <div class="divider-line green"></div>
+            <span class="divider-label green">Por qué te extraño</span>
+            <div class="divider-line green"></div>
+        </div>
+
+        <div class="mem-grid reveal">
+            <div class="mem-card gold-card">
+                <span class="mem-icon">✨</span>
+                <div class="mem-title">Tu risa</div>
+                <p class="mem-text">Esa que no podías controlar y que me contagiaba sin importar cómo estuviera.</p>
+            </div>
+            <div class="mem-card blue-card">
+                <span class="mem-icon">🌙</span>
+                <div class="mem-title">Las noches contigo</div>
+                <p class="mem-text">Las conversaciones que no queríamos que terminaran. Las que duraban hasta el
+                    amanecer.</p>
+            </div>
+            <div class="mem-card green-card">
+                <span class="mem-icon">🌿</span>
+                <div class="mem-title">Los momentos simples</div>
+                <p class="mem-text">Nada tenía que ser especial cuando estabas tú. Solo estar juntos ya era suficiente.
+                </p>
+            </div>
+            <div class="mem-card gold-card">
+                <span class="mem-icon">💛</span>
+                <div class="mem-title">Quién soy contigo</div>
+                <p class="mem-text">Me hacías querer ser mejor. Esa versión de mí mismo que aparecía cuando estabas
+                    cerca.</p>
+            </div>
+            <div class="mem-card blue-card wide">
+                <span class="mem-icon">🔵</span>
+                <div class="mem-title">Cómo me escuchabas</div>
+                <p class="mem-text">Siempre con atención real, nunca con prisa. Me hacías sentir que lo que decía
+                    importaba de verdad. Nunca nadie me escuchó como tú.</p>
+            </div>
+        </div>
+
+        <!-- NÚMERO 22 FLOTANTE -->
+        <div class="big-22-section reveal" style="margin: 3rem 0;">
+            <span class="big-22-inline">22</span>
+            <p>El número que nos marca a los dos. Cada vez que lo veo, pienso en ti.</p>
+        </div>
+
+        <!-- PROMESAS -->
+        <div class="divider reveal">
+            <div class="divider-line gold"></div>
+            <span class="divider-label gold">Lo que prometo</span>
+            <div class="divider-line gold"></div>
+        </div>
+
+        <div class="promesas reveal">
+            <div class="promesa">
+                <span class="promesa-icon">🌟</span>
+                Escucharte de verdad, no solo esperar mi turno para hablar.
+            </div>
+            <div class="promesa">
+                <span class="promesa-icon">💛</span>
+                Demostrar con hechos lo que a veces fallé en expresar con palabras.
+            </div>
+            <div class="promesa">
+                <span class="promesa-icon">🌊</span>
+                No dar por sentado lo que tenemos. Valorarlo cada día como el primero.
+            </div>
+            <div class="promesa">
+                <span class="promesa-icon">🌿</span>
+                Ser paciente, honesto y estar presente cuando me necesites.
+            </div>
+            <div class="promesa">
+                <span class="promesa-icon">✨</span>
+                Nunca dejar que el orgullo hable más fuerte que el amor.
+            </div>
+            <div class="promesa">
+                <span class="promesa-icon">🔵</span>
+                Recordar siempre que el <strong style="color:var(--dorado-lt)">22</strong> nos unió, y luchar para que
+                nos mantenga juntos.
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section reveal" style="margin-top: 3.5rem;" id="cta-main">
+            <p class="cta-title">¿Me das otra oportunidad?</p>
+            <p class="cta-sub">Un café, una llamada, un mensaje. Lo que tú quieras. Yo estaré — como siempre.</p>
+
+            <div id="btns-zone"
+                style="position:relative; min-height: 80px; display:flex; align-items:center; justify-content:center;">
+                <div class="cta-btns" id="btns-pair">
+                    <button class="btn btn-si" id="btn-si" onclick="respuestaSi()">
+                        <span class="heart">♥</span> Sí
+                    </button>
+                    <button class="btn btn-no" id="btn-no" onmouseover="escaparNo(this)" ontouchstart="escaparNo(this)">
+                        No
+                    </button>
+                </div>
+            </div>
+
+            <div id="respuesta-si" style="display:none;">
+                <div class="resp-emoji">🤍✨</div>
+                <p class="resp-titulo">¡Yo sabía que sí!</p>
+                <p class="resp-texto">
+                    Entonces ya está decidido —<br>
+                    <strong>Toy Story 5</strong> este <strong>sábado a las 5 PM</strong> 🎬<br>
+                    y después al <strong>mirador</strong> para tomarnos unas fotos bien bellas 📸<br><br>
+                    <em>Te espero con todo. ♡</em>
+                </p>
+                <div class="resp-detalles">
+                    <div class="resp-item">
+                        <span class="resp-icon">🎬</span>
+                        <div>
+                            <strong>Toy Story 5</strong>
+                            <span>Sábado · 5:00 PM</span>
+                        </div>
+                    </div>
+                    <div class="resp-item">
+                        <span class="resp-icon">📸</span>
+                        <div>
+                            <strong>El mirador</strong>
+                            <span>Después de la película</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POEMA -->
+        <div class="divider reveal">
+            <div class="divider-line gold"></div>
+            <span class="divider-label gold">Un poema para ti</span>
+            <div class="divider-line gold"></div>
+        </div>
+
+        <div class="poema-wrap reveal">
+            <div class="poema-deco">
+                <span class="poema-dragon">🤍</span>
+                <span class="poema-note">♪</span>
+            </div>
+
+            <div class="poema-card">
+                <div class="poema-titulo">Como en los sueños que volaban</div>
+                <div class="poema-sub">Inspirado en las noches que fuimos nuestro propio mundo</div>
+
+                <div class="poema-body">
+
+                    <div class="estrofa">
+                        <p>Había noches que parecían sacadas de un sueño,<br>
+                            donde el cielo se abría y todo tenía sentido —<br>
+                            tú riendo sin razón, yo mirándote extrañado,<br>
+                            y los dos flotando en algo que no tenía nombre.</p>
+                    </div>
+
+                    <div class="poema-sep">
+                        <span class="ps-linea"></span>
+                        <span class="ps-icon">✦</span>
+                        <span class="ps-linea"></span>
+                    </div>
+
+                    <div class="estrofa">
+                        <p>En esas danzas que solo nosotros bailábamos,<br>
+                            sin música, sin pasos, sin nadie que nos viera —<br>
+                            solo el tiempo quieto y tu voz que me decía<br>
+                            <em>"ya, para, que eso no te hace bien"</em> —<br>
+                            y yo te hacía caso, aunque fingía que no.
+                        </p>
+                    </div>
+
+                    <div class="poema-sep">
+                        <span class="ps-linea"></span>
+                        <span class="ps-icon">✦</span>
+                        <span class="ps-linea"></span>
+                    </div>
+
+                    <div class="estrofa">
+                        <p>Me cuidabas con esa calma tuya de dragón manso,<br>
+                            el que no necesita fuego para proteger —<br>
+                            bastaba tu mirada cuando yo iba a equivocarme,<br>
+                            bastaba tu mano quitando lo que me hacía daño.</p>
+                    </div>
+
+                    <div class="poema-sep">
+                        <span class="ps-linea"></span>
+                        <span class="ps-icon">✦</span>
+                        <span class="ps-linea"></span>
+                    </div>
+
+                    <div class="estrofa">
+                        <p>Nos reímos de cosas que hoy no recuerdo bien<br>
+                            pero que siento aquí, guardadas sin dirección —<br>
+                            esas risas que nacían de la nada a medianoche<br>
+                            y terminaban en silencio, del bueno, del que abraza.</p>
+                    </div>
+
+                    <div class="poema-sep">
+                        <span class="ps-linea"></span>
+                        <span class="ps-icon">✦</span>
+                        <span class="ps-linea"></span>
+                    </div>
+
+                    <div class="estrofa highlight-estrofa">
+                        <p>Y en esos días que pasábamos sin destino,<br>
+                            descubrí que el destino siempre fuiste tú —<br>
+                            la botella de agua que me dabas sin decir nada,<br>
+                            el <em>"cuídate"</em> disfrazado de gesto sencillo.</p>
+                    </div>
+
+                    <div class="poema-sep">
+                        <span class="ps-linea"></span>
+                        <span class="ps-icon">✦</span>
+                        <span class="ps-linea"></span>
+                    </div>
+
+                    <div class="estrofa">
+                        <p>Eso que nos une no cabe en una sola palabra —<br>
+                            es el <strong class="num-22">22</strong> que los dos llevamos marcado,<br>
+                            es el vuelo torpe de aprender a quererse,<br>
+                            es saber que alguien te cuida sin pedirte nada.</p>
+                    </div>
+
+                    <div class="poema-sep">
+                        <span class="ps-linea"></span>
+                        <span class="ps-icon">✦</span>
+                        <span class="ps-linea"></span>
+                    </div>
+
+                    <div class="estrofa estrofa-final">
+                        <p>Si hay sueños que merecen volver a soñarse,<br>
+                            si hay danzas que piden una segunda vuelta —<br>
+                            te juro que aprendo, que ya no vuelvo a perderme,<br>
+                            que contigo hasta caer tiene su propia belleza.</p>
+                    </div>
+
+                    <div class="poema-firma">
+                        <span>— Para la que me cuidó cuando yo no me cuidaba</span>
+                        <span class="poema-firma-22">22 · siempre</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Botella de agua decorativa -->
+            <div class="botella-wrap reveal">
+                <div class="botella">
+                    <div class="botella-tapa"></div>
+                    <div class="botella-cuerpo">
+                        <span class="botella-texto">H₂O<br><small>de tu parte</small></span>
+                        <div class="botella-agua"></div>
+                    </div>
+                </div>
+                <p class="botella-label">La botella que me dabas<br>cuando más la necesitaba</p>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer reveal">
+            <p>"Lo que el universo une dos veces con el mismo número,<br>no lo separa el tiempo ni el orgullo."</p>
+            <span class="footer-22">— El 22 que nos une —</span>
+        </footer>
+
+    </div>
+
+    <script>
+        /* ── CANVAS STARS ── */
+        (function () {
+            const c = document.getElementById('canvas-bg');
+            const ctx = c.getContext('2d');
+            let stars = [];
+            let W, H;
+
+            function resize() {
+                W = c.width = window.innerWidth;
+                H = c.height = window.innerHeight;
+            }
+
+            function mkStar() {
+                return {
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    r: Math.random() * 1.2 + 0.3,
+                    op: Math.random(),
+                    d: (Math.random() * 0.006) + 0.002,
+                    rising: Math.random() > 0.5,
+                    /* color: gold, blue, green, white */
+                    hue: [null, '#c9a34a', '#4a7fa5', '#4a8c6a'][Math.floor(Math.random() * 4)]
+                };
+            }
+
+            function init() {
+                resize();
+                stars = Array.from({ length: 140 }, mkStar);
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, W, H);
+                stars.forEach(s => {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    const col = s.hue || '#f0e8d8';
+                    ctx.fillStyle = col;
+                    ctx.globalAlpha = s.op * 0.55;
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+
+                    if (s.rising) { s.op += s.d; if (s.op >= 1) s.rising = false; }
+                    else { s.op -= s.d; if (s.op <= 0) s.rising = true; }
+                });
+                requestAnimationFrame(draw);
+            }
+
+            window.addEventListener('resize', resize);
+            init();
+            draw();
+        })();
+
+        /* ── BOTONES SÍ / NO ── */
+        function respuestaSi() {
+            document.getElementById('btns-zone').style.display = 'none';
+            const resp = document.getElementById('respuesta-si');
+            resp.style.display = 'block';
+
+            // confetti de corazones y estrellas
+            const emojis = ['♥', '✨', '🌟', '💛', '🤍', '📸', '🎬'];
+            for (let i = 0; i < 28; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    el.style.cssText = `
+          position:fixed;
+          left:${Math.random() * 100}vw;
+          top:-2rem;
+          font-size:${1.2 + Math.random() * 1.2}rem;
+          z-index:9999;
+          pointer-events:none;
+          animation: confettiFall ${2 + Math.random() * 2}s ease-in forwards;
+        `;
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 4000);
+                }, i * 120);
+            }
+        }
+
+        function escaparNo(btn) {
+            // Remove the CSS transform so absolute left/top take full control
+            btn.style.transform = 'none';
+
+            // Shrink a bit each time
+            const currentSize = parseFloat(btn.style.fontSize) || 1.05;
+            const nextSize = Math.max(currentSize - 0.08, 0.4);
+            btn.style.fontSize = nextSize + 'rem';
+
+            const pair = document.getElementById('btns-pair');
+            const pairW = pair.offsetWidth || 400;
+            const pairH = pair.offsetHeight || 120;
+            const btnW = btn.offsetWidth || 130;
+            const btnH = btn.offsetHeight || 48;
+
+            // SI button occupies roughly left half — keep NO on right half or random edges
+            const siCenterX = pairW / 2 - 80;
+            let nx, ny, tries = 0;
+            do {
+                nx = Math.random() * (pairW - btnW);
+                ny = Math.random() * Math.max(pairH - btnH, 20);
+                tries++;
+                // avoid landing on top of SI button area
+            } while (tries < 15 && nx > siCenterX - 100 && nx < siCenterX + 100 && ny > pairH / 2 - 40 && ny < pairH / 2 + 40);
+
+            btn.style.left = Math.max(0, Math.min(nx, pairW - btnW)) + 'px';
+            btn.style.top = Math.max(0, Math.min(ny, pairH - btnH)) + 'px';
+            // Make zone taller so NO has room to roam
+            pair.style.minHeight = Math.max(parseInt(pair.style.minHeight) || 120, ny + btnH + 20) + 'px';
+
+            if (nextSize <= 0.4) {
+                btn.style.opacity = '0';
+                btn.style.pointerEvents = 'none';
+            }
+        }
+
+        /* ── SCROLL REVEAL ── */
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('on');
+                    observer.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.08 });
+
+        revealEls.forEach(el => observer.observe(el));
+    </script>
+
+</body>
+
+</html>
+<!-- ESTE SCRIPT CIERRA EL BODY EXISTENTE, PERO MEJOR INSERTAR ANTES DEL </div class=wrap> -->
