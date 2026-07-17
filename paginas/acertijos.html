@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caja Fuerte de Recuerdos</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --negro: #08090b;
+            --negro-2: #161a1f;
+            --dorado: #c9a34a;
+            --dorado-lt: #e8c87a;
+            --crema: #f0e8d8;
+            --azul: #4a7fa5;
+            --muted: #6b6458;
+            --border: rgba(201, 163, 74, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--negro);
+            color: var(--crema);
+            min-height: 100vh;
+            padding: 5rem 1.5rem 3rem;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(74, 127, 165, 0.1), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(201, 163, 74, 0.1), transparent 40%);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            background: rgba(15, 17, 20, 0.6);
+            border: 1px solid var(--border);
+            color: var(--dorado-lt);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(201, 163, 74, 0.15);
+            color: var(--crema);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            color: var(--dorado-lt);
+            font-style: italic;
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            max-width: 500px;
+            margin-inline: auto;
+        }
+
+        .vault-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .level {
+            background: rgba(22, 26, 31, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        /* Level States */
+        .level.locked {
+            opacity: 0.5;
+            pointer-events: none;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .level.locked .lock-icon {
+            display: block;
+        }
+
+        .level.locked .level-content {
+            display: none;
+        }
+
+        .level.active {
+            border-color: var(--dorado);
+            box-shadow: 0 0 20px rgba(201, 163, 74, 0.15);
+            transform: scale(1.02);
+        }
+
+        .level.active .lock-icon {
+            display: none;
+        }
+
+        .level.solved {
+            border-color: var(--azul);
+            background: rgba(74, 127, 165, 0.1);
+        }
+
+        .level.solved .lock-icon {
+            display: none;
+        }
+
+        .level.solved .puzzle-form {
+            display: none;
+        }
+
+        .level.solved .prize-box {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        .lock-icon {
+            font-size: 3rem;
+            text-align: center;
+            color: var(--muted);
+            display: none;
+        }
+
+        .level-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--dorado-lt);
+            margin-bottom: 0.5rem;
+        }
+
+        .puzzle-clue {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: var(--crema);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .puzzle-form {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .puzzle-input {
+            flex: 1;
+            background: var(--negro);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--crema);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-family: 'Jost', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .puzzle-input:focus {
+            border-color: var(--dorado);
+        }
+
+        .btn-solve {
+            background: linear-gradient(135deg, var(--dorado-lt), var(--dorado));
+            color: var(--negro);
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 8px;
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-solve:active {
+            transform: scale(0.95);
+        }
+
+        .prize-box {
+            display: none;
+            background: rgba(201, 163, 74, 0.1);
+            border: 1px dashed var(--dorado-lt);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .prize-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .prize-title {
+            color: var(--dorado-lt);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .prize-text {
+            color: var(--crema);
+            font-size: 0.95rem;
+        }
+
+        .error-msg {
+            color: #d45c74;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="../index.html" class="back-btn">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round">
+            <path d="M9.5 6H2.5M2.5 6L5.5 3M2.5 6L5.5 9" />
+        </svg> Inicio
+    </a>
+
+    <div class="header">
+        <h1>Caja Fuerte de Recuerdos</h1>
+        <p>Resuelve las pistas para desbloquear premios secretos. Cada respuesta nos une más. (Escribe tus respuestas
+            sin tildes ni mayúsculas extrañas)</p>
+    </div>
+
+    <div class="vault-grid" id="vault">
+        <!-- Los niveles se generan desde JS -->
+    </div>
+
+    <script>
+        /* ==============================================================
+           PERSONALIZA TUS ACERTIJOS AQUÍ
+           Respuestas (answers): Escríbelas siempre en MINÚSCULAS.
+           Puedes poner varias respuestas válidas en el array [].
+        ============================================================== */
+        const niveles = [
+            {
+                id: 1,
+                clue: "Pista 1: El universo nos dio el mismo número en meses distintos. ¿Cuál es el número exacto que nos marca y nos une?",
+                answers: ["22", "veintidos", "veintidós"],
+                prize: {
+                    icon: "🎟️",
+                    title: "Premio 1 Desbloqueado",
+                    text: "Has ganado un cupón VIP: Vale por un abrazo tan fuerte que te haga olvidar todo lo malo."
+                }
+            },
+            {
+                id: 2,
+                clue: "Pista 2: Si sumas mi mes de nacimiento (Junio) y tu mes de nacimiento (Septiembre), obtendrás la respuesta de esta caja.",
+                answers: ["15", "quince"],
+                prize: {
+                    icon: "🍿",
+                    title: "Premio 2 Desbloqueado",
+                    text: "Vale por una tarde de tu película favorita, y yo te preparo todo."
+                }
+            },
+            {
+                id: 3,
+                clue: "Pista 3: La diferencia entre nuestros meses (9 menos 6) multiplicada por nuestro día (22)... Es una matemática difícil, ¿cuánto es?",
+                answers: ["66", "sesenta y seis"],
+                prize: {
+                    icon: "💌",
+                    title: "Premio 3 Desbloqueado",
+                    text: "Has desbloqueado una confesión: Eres la persona más importante en mi vida."
+                }
+            },
+            {
+                id: 4,
+                clue: "Que fue lo primero que yo vi al momento de estar con tigo literalmete lo priero",
+                answers: ["botella de agua", "una botella de agua en la mesa", "agua"],
+                prize: {
+                    icon: "👀",
+                    title: "Premio 4 Desbloqueado",
+                    text: "Tu atención al detalle es increíble. Te ganaste el derecho a hacerme una pregunta incómoda que debo responder con la verdad."
+                }
+            },
+            {
+                id: 5,
+                clue: "Pista 5 (Matemática Pura): ¿Cuál es la suma exacta de nuestras dos edades hoy en día? (Escribe solo el número, ej. 45)",
+                answers: ["50"],
+                prize: {
+                    icon: "⏳",
+                    title: "Premio 5 Desbloqueado",
+                    text: "El tiempo pasa, pero mi amor crece. Vale por: Un día completo donde tú decides todos los planes."
+                }
+            },
+            {
+                id: 6,
+                clue: "Pista 6 (Lógica Abstracta): Piensa en el nombre del lugar exacto donde nos dimos nuestro primer beso. Ahora... escríbelo completamente AL REVÉS.",
+                answers: ["afos le", "afos,", "etnaruatser"],
+                prize: {
+                    icon: "🔄",
+                    title: "Premio 6 Desbloqueado",
+                    text: "Has hackeado mi mente. Tienes un pase libre para ganarme una discusión en el futuro, sin importar de qué sea."
+                }
+            },
+            {
+                id: 7,
+                clue: "Pista 7 (La Clave Final): Si me tienes, quieres compartirme; si me compartes, no me tienes. ¿Qué soy?",
+                answers: ["un secreto", "el secreto", "secreto", "secreto "],
+                prize: {
+                    icon: "✨",
+                    title: "Premio Máximo Desbloqueado",
+                    text: "Felicidades, has resuelto todos los enigmas. Tu premio mayor es que prometo nunca dejar de elegirte y guardarte como mi mejor secreto a voces. Te amo."
+                }
+            }
+        ];
+        /* ============================================================== */
+
+        const STORAGE_KEY = 'teamo_juego_nivel';
+        let nivelActual = parseInt(localStorage.getItem(STORAGE_KEY)) || 1;
+
+        const vaultEl = document.getElementById('vault');
+
+        function renderNiveles() {
+            vaultEl.innerHTML = niveles.map(n => {
+                let stateClass = '';
+                if (n.id < nivelActual) stateClass = 'solved';
+                else if (n.id === nivelActual) stateClass = 'active';
+                else stateClass = 'locked';
+
+                return `
+                    <div class="level ${stateClass}" id="level-${n.id}">
+                        <div class="lock-icon">🔒</div>
+                        
+                        <div class="level-content">
+                            <div class="level-num">Nivel ${n.id}</div>
+                            <p class="puzzle-clue">${n.clue}</p>
+                            
+                            <div class="puzzle-form">
+                                <input type="text" id="input-${n.id}" class="puzzle-input" placeholder="Tu respuesta..." autocomplete="off">
+                                <button class="btn-solve" onclick="comprobar(${n.id})">Abrir</button>
+                            </div>
+                            <div class="error-msg" id="error-${n.id}">Mmm, esa no parece ser la respuesta correcta. Intenta de nuevo.</div>
+                            
+                            <div class="prize-box">
+                                <span class="prize-icon">${n.prize.icon}</span>
+                                <h3 class="prize-title">${n.prize.title}</h3>
+                                <p class="prize-text">${n.prize.text}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function comprobar(id) {
+            const levelData = niveles.find(n => n.id === id);
+            const inputEl = document.getElementById(`input-${id}`);
+            const errorEl = document.getElementById(`error-${id}`);
+            const levelCard = document.getElementById(`level-${id}`);
+
+            // Limpiar texto para comparar (minúsculas, sin espacios extra, sin tildes básicas)
+            let answer = inputEl.value.toLowerCase().trim();
+            answer = answer.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+            const isCorrect = levelData.answers.some(a => {
+                const validAns = a.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                return answer === validAns;
+            });
+
+            if (isCorrect) {
+                // Sube de nivel
+                errorEl.style.display = 'none';
+                nivelActual = id + 1;
+                localStorage.setItem(STORAGE_KEY, nivelActual);
+                renderNiveles();
+            } else {
+                // Error
+                errorEl.style.display = 'block';
+                levelCard.classList.remove('shake');
+                void levelCard.offsetWidth; // trigger reflow
+                levelCard.classList.add('shake');
+            }
+        }
+
+        // Permitir usar la tecla Enter
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const activeLevel = document.querySelector('.level.active .btn-solve');
+                if (activeLevel) activeLevel.click();
+            }
+        });
+
+        renderNiveles();
+    </script>
+</body>
+
+</html>
